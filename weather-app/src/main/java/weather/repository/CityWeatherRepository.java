@@ -9,7 +9,10 @@ import org.springframework.stereotype.Repository;
 import weather.model.CityWeather;
 
 @Repository
-public interface CityWeatherRepository extends MongoRepository {    
+public interface CityWeatherRepository extends MongoRepository<CityWeather, String> {    
 
-    List findCityWeatherByDate(String date);
+	List<CityWeather> findByCity(String city);
+
+    List<CityWeather> findByDate(String date);    
+    
 }

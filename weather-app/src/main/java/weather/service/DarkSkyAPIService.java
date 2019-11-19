@@ -1,11 +1,13 @@
 package weather.service;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,8 +18,19 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import weather.model.City;
+import weather.model.CityWeather;
+import weather.util.DateUtil;
+
 @Service
-public class DarkSkyAPIService {
+public class DarkSkyAPIService {	
+	
+	@Autowired
+	CityWeatherRepositoryServiceImpl cityWeatherRepositoryService;
 	
 	@Value("${proxy.url}")
 	String proxyUrl;
@@ -68,6 +81,28 @@ public class DarkSkyAPIService {
 		
 		ResponseEntity<String> result = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
 		System.out.println(cityKey +": " +result.getBody());
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {			
+			DateUtil dateUtil = new DateUtil();
+			City city = objectMapper.readValue(result.getBody(), City.class);
+			String dateToday = dateUtil.timestampToDate(new Date().getTime());
+			CityWeather cityWeather = city.getCurrently();
+			cityWeather.setDate(dateToday);
+		    cityWeather.setCity(cityKey);
+		    cityWeatherRepositoryService.createCityWeather(cityWeather);
+			System.out.println();
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return "";
 	}
 }

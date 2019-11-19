@@ -1,17 +1,22 @@
 package weather.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document("city_weather")
+@Document(collection="city_weather")
 public class CityWeather {
 
 	@Id
-    private String id;
+    private ObjectId id;
+
+	@Field
 	private String date;
+	@Field
 	private String city;
-	private String timestamp;	
 	private String summary;
+	private String time;		
 	private String icon;
 	private String nearestStormDistance;
 	private String nearestStormBearing;
@@ -29,11 +34,13 @@ public class CityWeather {
 	private String uvIndex;
 	private String visibility;
 	private String ozone;
+	private String precipType;
+	private String precipAccumulation;
 	
-	public String getId() {
+	public ObjectId getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(ObjectId id) {
 		this.id = id;
 	}
 	public String getDate() {
@@ -48,11 +55,11 @@ public class CityWeather {
 	public void setCity(String city) {
 		this.city = city;
 	}
-	public String getTimestamp() {
-		return timestamp;
+	public String getTime() {
+		return time;
 	}
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
+	public void setTime(String time) {
+		this.time = time;
 	}
 	public String getSummary() {
 		return summary;
@@ -161,6 +168,18 @@ public class CityWeather {
 	}
 	public void setOzone(String ozone) {
 		this.ozone = ozone;
+	}
+	public String getPrecipType() {
+		return precipType;
+	}
+	public void setPrecipType(String precipType) {
+		this.precipType = precipType;
+	}
+	public String getPrecipAccumulation() {
+		return precipAccumulation;
+	}
+	public void setPrecipAccumulation(String precipAccumulation) {
+		this.precipAccumulation = precipAccumulation;
 	}
 
 }
