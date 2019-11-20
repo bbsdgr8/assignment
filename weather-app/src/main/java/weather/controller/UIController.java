@@ -34,8 +34,8 @@ public class UIController {
 	}	
 
 	@GetMapping("/weatherNow2")
-	public String showWeather(Model model) {
-		darkSkyAPIService.getTodayWeather();
+	public String showWeather(Model model) {		
+		model.addAttribute("cityWeatherList",darkSkyAPIService.getTodayWeather());
 		return "weather";				
 	}
 
