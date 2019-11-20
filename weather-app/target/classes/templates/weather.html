@@ -14,46 +14,35 @@
 <title>Weather Today</title>
 </head>
 <body>
-	<table class="table table-sm">
+	<table class="table table-sm table-striped-2">
 		<thead>
 			<tr>
-				<th scope="row">City</th>
-				<th>Max Temperature</th>
-				<th>Min Temperature</th>
-				<th>Date</th>
-				<th>Country</th>
-				<th>Geography</th>
-				<th>Weather Forecast</th>
+				<th scope="col">City</th>
+				<th scope="col">Weather Today</th>
+				<th scope="col">Temperature</th>
+				<th scope="col">Wind Speed</th>
+				<th scope="col">Humidity</th>
+				<th scope="col">Precipitation</th>
+				
 			</tr>
 		</thead>
-		<tbody>
-			<tr class="table-warning">
-				<th scope="row">Toronto</th>
-				<td>-5°C</td>
-				<td>-10°C</td>
-				<td>18-DEC-2015</td>
-				<td>Canada</td>
-				<td>North America</td>
-				<td>Snow Storm</td>
-			</tr>
-			<tr class="table-danger">
-				<th scope="row">Montreal</th>
-				<td>-3°C</td>
-				<td>-8°C</td>
-				<td>18-DEC-2015</td>
-				<td>Canada</td>
-				<td>North America</td>
-				<td>Sunny</td>
-			</tr>
-			<tr class="table-info">
-				<th scope="row">Vancouver</th>
-				<td>-1°C</td>
-				<td>-6°C</td>
-				<td>18-DEC-2015</td>
-				<td>Canada</td>
-				<td>North America</td>
-				<td>Ice Rain</td>
-			</tr>
+		<tbody th:if="${not #lists.isEmpty(cityWeatherList)}">
+			<th:block th:each="cityWeather,iter : ${cityWeatherList}">
+				<tr th:attr="data-target='#accordion_'+${iter.index}" data-toggle="collapse" class="accordion-toggle">
+		            <td scope="row" th:text="${cityWeather.city}"></td>
+		            <td th:text="${cityWeather.summary}"></td>
+		            <td th:text="${cityWeather.temperature} + ' °C'" class="text-left"></td>
+		            <td th:text="${cityWeather.windSpeed} + ' m/s'" class="text-left"></td>
+		            <td th:text="${cityWeather.humidity}" class="text-left"></td>
+		            <td th:with="pct=${#numbers.formatDecimal(cityWeather.precipProbability , 1, 2)} * 100"
+		            	th:text="${#numbers.formatDecimal(pct,1,0)} + '%'" class="text-left"></td>         	           
+		        </tr>
+		        <tr>
+			        <td colspan="6" class="hiddenRow">
+			            <div class="accordion-body collapse" th:id="'accordion_'+${iter.index}">there is nothing to see here (yet)<br></div>
+			        </td>
+			    </tr>
+	        </th:block>			
 		</tbody>
 	</table>
 
