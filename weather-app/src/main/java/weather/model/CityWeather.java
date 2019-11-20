@@ -1,18 +1,20 @@
 package weather.model;
 
+import java.util.Date;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection="city_weather")
+@Document(collection="cityWeather")
 public class CityWeather {
 
 	@Id
     private ObjectId id;
 
 	@Field
-	private String date;
+	private Date date;
 	@Field
 	private String city;
 	private String summary;
@@ -43,10 +45,10 @@ public class CityWeather {
 	public void setId(ObjectId id) {
 		this.id = id;
 	}
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 	public String getCity() {

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import weather.service.DarkSkyAPIService;
+import weather.util.DateUtil;
 
 @Controller
 public class UIController {
@@ -27,15 +28,11 @@ public class UIController {
 	DarkSkyAPIService darkSkyAPIService;
 
 	@GetMapping("/weatherNow")
-	public String greeting(@RequestParam(name = "name", required = false, defaultValue = "World") String name,
-			Model model) {
-		model.addAttribute("name", name);
-		return "weather";
-	}	
-
-	@GetMapping("/weatherNow2")
 	public String showWeather(Model model) {		
+		DateUtil dateUtil = new DateUtil();
 		model.addAttribute("cityWeatherList",darkSkyAPIService.getTodayWeather());
+		model.addAttribute("localDateToday",dateUtil.getLocalDateToday());
+		
 		return "weather";				
 	}
 

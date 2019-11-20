@@ -17,6 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -57,7 +58,7 @@ public class DarkSkyAPIService {
 	
 	public List<CityWeather> getTodayWeather() {
 		DateUtil dateUtil = new DateUtil();
-		String dateToday = dateUtil.timestampToDate(new Date().getTime());
+		Date dateToday = dateUtil.formatDate(new Date());
 		List<CityWeather> cityWeatherList = new ArrayList<CityWeather>();
 		for (String key : cityMap.keySet()) {
 			CityWeather dbCityWeather = cityWeatherRepositoryService.findByCityAndDate(key, dateToday);
@@ -112,5 +113,13 @@ public class DarkSkyAPIService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@Scheduled(cron = "0 0 */12 * * *")
+	public void houseKeepRecords() {
+		Date today = new Date();
+		Date threeDaysAgo = new Date(today.getTime() - (3*60*60*24*1000));
+		cityWeatherRepositoryService.deleteByDate(threeDaysAgo);
+		System.out.println("yes");
 	}
 }

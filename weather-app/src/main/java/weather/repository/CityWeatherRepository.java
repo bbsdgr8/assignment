@@ -1,5 +1,6 @@
 package weather.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -12,10 +13,12 @@ import weather.model.CityWeather;
 public interface CityWeatherRepository extends MongoRepository<CityWeather, String> {    
 
 	List<CityWeather> findByCity(String city);
+	
+	@Query(value="{date : {$lte: ?0}}", delete = true)
+	void deleteByDate(Date date);
 
-    List<CityWeather> findByDate(String date);   
     
     @Query(value = "{'city': ?0, 'date': ?1}")
-    CityWeather findByCityAndDate(String city, String date);
+    CityWeather findByCityAndDate(String city, Date date);
     
 }

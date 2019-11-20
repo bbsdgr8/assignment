@@ -14,11 +14,12 @@
 <title>Weather Today</title>
 </head>
 <body>
-	<table class="table table-sm table-striped-2">
+	<h1 class="w-50 p-3" th:text="'Weather for ' + ${localDateToday}"></h1>		
+	<table class="table table-sm m-3 table-striped-2">
 		<thead>
 			<tr>
 				<th scope="col">City</th>
-				<th scope="col">Weather Today</th>
+				<th scope="col">Current Weather</th>
 				<th scope="col">Temperature</th>
 				<th scope="col">Wind Speed</th>
 				<th scope="col">Humidity</th>
@@ -28,7 +29,7 @@
 		</thead>
 		<tbody th:if="${not #lists.isEmpty(cityWeatherList)}">
 			<th:block th:each="cityWeather,iter : ${cityWeatherList}">
-				<tr th:attr="data-target='#accordion_'+${iter.index}" data-toggle="collapse" class="accordion-toggle">
+				<tr th:attr="data-target='#accordion_'+${iter.index}" data-toggle="collapse" class="accordion-toggle border-bottom-0" >
 		            <td scope="row" th:text="${cityWeather.city}"></td>
 		            <td th:text="${cityWeather.summary}"></td>
 		            <td th:text="${cityWeather.temperature} + ' °C'" class="text-left"></td>
@@ -37,9 +38,22 @@
 		            <td th:with="pct=${#numbers.formatDecimal(cityWeather.precipProbability , 1, 2)} * 100"
 		            	th:text="${#numbers.formatDecimal(pct,1,0)} + '%'" class="text-left"></td>         	           
 		        </tr>
-		        <tr>
-			        <td colspan="6" class="hiddenRow">
-			            <div class="accordion-body collapse" th:id="'accordion_'+${iter.index}">there is nothing to see here (yet)<br></div>
+		        <tr class="border-top-0">
+			        <td colspan="6" class="hiddenRow border-top-0 font-weight-light">
+			            <div class="accordion-body collapse pl-5" th:id="'accordion_'+${iter.index}" style="">
+			            	<th:block th:if="${cityWeather.visibility != null}">
+			            		<span class="w-25 p-3 pl-5" th:text="'Visibility: ' + ${cityWeather.visibility}"></span>		
+			            	</th:block>
+			            	<th:block th:if="${cityWeather.uvIndex != null}">
+			            		<span class="w-25 p-3" th:text="'UV Index: ' + ${cityWeather.uvIndex}"></span>		
+			            	</th:block>
+			            	<th:block th:if="${cityWeather.pressure != null}">
+			            		<span class="w-25 p-3" th:text="'Pressure: ' + ${cityWeather.pressure}"></span>		
+			            	</th:block>
+			            	<th:block th:if="${cityWeather.ozone != null}">
+			            		<span class="w-25 p-3" th:text="'Ozone: ' + ${cityWeather.ozone}"></span>		
+			            	</th:block>					            																		
+						</div>
 			        </td>
 			    </tr>
 	        </th:block>			
