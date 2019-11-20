@@ -3,8 +3,10 @@ package weather.service;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,14 +55,27 @@ public class DarkSkyAPIService {
 	@Value("${darkSky.key}")
 	String darkSkyKey;
 	
-	public String getTodayWeather() {
+	public List<CityWeather> getTodayWeather() {
+		DateUtil dateUtil = new DateUtil();
+		String dateToday = dateUtil.timestampToDate(new Date().getTime());
+		List<CityWeather> cityWeatherList = new ArrayList<CityWeather>();
 		for (String key : cityMap.keySet()) {
-			fetchDarkSkyAPI(key);
+			CityWeather dbCityWeather = cityWeatherRepositoryService.findByCityAndDate(key, dateToday);
+			if (null == dbCityWeather) {
+				CityWeather cityWeather = fetchDarkSkyAPI(key);
+				if (null != cityWeather) {					
+					cityWeatherRepositoryService.createCityWeather(cityWeather, key, dateToday);
+					cityWeatherList.add(cityWeather);					
+				}
+			} else {
+				cityWeatherList.add(dbCityWeather);
+				System.out.println("exists :" + dbCityWeather.getId());
+			}			
 		}
-		return "";
+		return cityWeatherList;
 	}
 	
-	private String fetchDarkSkyAPI(String cityKey) {
+	private CityWeather fetchDarkSkyAPI(String cityKey) {
 		RestTemplate restTemplate;
 		String apiUrl = darkSkyUrl + darkSkyKey + "/" +  cityMap.get(cityKey) + darkSkyOptions;
 		System.out.println(apiUrl);
@@ -83,15 +98,9 @@ public class DarkSkyAPIService {
 		System.out.println(cityKey +": " +result.getBody());
 		
 		ObjectMapper objectMapper = new ObjectMapper();
-		try {			
-			DateUtil dateUtil = new DateUtil();
-			City city = objectMapper.readValue(result.getBody(), City.class);
-			String dateToday = dateUtil.timestampToDate(new Date().getTime());
-			CityWeather cityWeather = city.getCurrently();
-			cityWeather.setDate(dateToday);
-		    cityWeather.setCity(cityKey);
-		    cityWeatherRepositoryService.createCityWeather(cityWeather);
-			System.out.println();
+		try {						
+			City city = objectMapper.readValue(result.getBody(), City.class);			
+			return city.getCurrently();					    
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -102,7 +111,6 @@ public class DarkSkyAPIService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return "";
+		return null;
 	}
 }

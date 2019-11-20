@@ -13,6 +13,9 @@ public interface CityWeatherRepository extends MongoRepository<CityWeather, Stri
 
 	List<CityWeather> findByCity(String city);
 
-    List<CityWeather> findByDate(String date);    
+    List<CityWeather> findByDate(String date);   
+    
+    @Query(value = "{'city': ?0, 'date': ?1}")
+    CityWeather findByCityAndDate(String city, String date);
     
 }
