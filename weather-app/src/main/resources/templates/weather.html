@@ -11,6 +11,8 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	crossorigin="anonymous">
+	
+<link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" />
 <title>Weather Today</title>
 </head>
 <body>
@@ -39,20 +41,24 @@
 		            	th:text="${#numbers.formatDecimal(pct,1,0)} + '%'" class="text-left"></td>         	           
 		        </tr>
 		        <tr class="border-top-0">
-			        <td colspan="6" class="hiddenRow border-top-0 font-weight-light">
+			        <td colspan="6" class="hiddenRow border-top-0 font-weight-light">			        	
 			            <div class="accordion-body collapse pl-5" th:id="'accordion_'+${iter.index}" style="">
-			            	<th:block th:if="${cityWeather.visibility != null}">
-			            		<span class="w-25 p-3 pl-5" th:text="'Visibility: ' + ${cityWeather.visibility}"></span>		
-			            	</th:block>
-			            	<th:block th:if="${cityWeather.uvIndex != null}">
-			            		<span class="w-25 p-3" th:text="'UV Index: ' + ${cityWeather.uvIndex}"></span>		
-			            	</th:block>
-			            	<th:block th:if="${cityWeather.pressure != null}">
-			            		<span class="w-25 p-3" th:text="'Pressure: ' + ${cityWeather.pressure}"></span>		
-			            	</th:block>
-			            	<th:block th:if="${cityWeather.ozone != null}">
-			            		<span class="w-25 p-3" th:text="'Ozone: ' + ${cityWeather.ozone}"></span>		
-			            	</th:block>					            																		
+			            	<div class="pt-3 pl-5 pb-1"><h6>Other Information:</h6></div>
+			            	<div>
+			            		<th:block th:if="${cityWeather.visibility != null}">
+			            			<span class="w-25 p-3 pl-5" th:text="'Visibility: ' + ${cityWeather.visibility}"></span>		
+				            	</th:block>
+				            	<th:block th:if="${cityWeather.uvIndex != null}">
+				            		<span class="w-25 p-3" th:text="'UV Index: ' + ${cityWeather.uvIndex}"></span>		
+				            	</th:block>
+				            	<th:block th:if="${cityWeather.pressure != null}">
+				            		<span class="w-25 p-3" th:text="'Pressure: ' + ${cityWeather.pressure}"></span>		
+				            	</th:block>
+				            	<th:block th:if="${cityWeather.ozone != null}">
+				            		<span class="w-25 p-3" th:text="'Ozone: ' + ${cityWeather.ozone}"></span>		
+				            	</th:block>	
+			            	</div>
+			            					            																		
 						</div>
 			        </td>
 			    </tr>

@@ -5,7 +5,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class DateUtil {
+	private static final Logger logger = LogManager.getLogger("WeatherAppLogger");
 
 	public String timestampToDate(String ts) {		
 		int tsInt = Integer.parseInt(ts);
@@ -35,7 +39,7 @@ public class DateUtil {
 			Date newDate = dateFormat.parse(strDate);			
 			return newDate;
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}	
 		return null;
 	}

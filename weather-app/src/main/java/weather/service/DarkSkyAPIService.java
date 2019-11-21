@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -31,6 +33,7 @@ import weather.util.DateUtil;
 
 @Service
 public class DarkSkyAPIService {	
+	private static final Logger logger = LogManager.getLogger("WeatherAppLogger");
 	
 	@Autowired
 	CityWeatherRepositoryServiceImpl cityWeatherRepositoryService;
@@ -59,6 +62,7 @@ public class DarkSkyAPIService {
 	public List<CityWeather> getTodayWeather() {
 		DateUtil dateUtil = new DateUtil();
 		Date dateToday = dateUtil.formatDate(new Date());
+		logger.info("Initialize get weather today:" + dateToday);
 		List<CityWeather> cityWeatherList = new ArrayList<CityWeather>();
 		for (String key : cityMap.keySet()) {
 			CityWeather dbCityWeather = cityWeatherRepositoryService.findByCityAndDate(key, dateToday);
@@ -70,7 +74,7 @@ public class DarkSkyAPIService {
 				}
 			} else {
 				cityWeatherList.add(dbCityWeather);
-				System.out.println("exists :" + dbCityWeather.getId());
+				logger.info("Weather for city: " + key + " and date: " + dateToday + "already exists");
 			}			
 		}
 		return cityWeatherList;
@@ -79,7 +83,7 @@ public class DarkSkyAPIService {
 	private CityWeather fetchDarkSkyAPI(String cityKey) {
 		RestTemplate restTemplate;
 		String apiUrl = darkSkyUrl + darkSkyKey + "/" +  cityMap.get(cityKey) + darkSkyOptions;
-		System.out.println(apiUrl);
+		logger.info("DarkSky API request: "+ apiUrl);
 		if (isProxyRequired) {
 			SimpleClientHttpRequestFactory clientHttpReq = new SimpleClientHttpRequestFactory();
 			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl, proxyPort));
@@ -96,21 +100,18 @@ public class DarkSkyAPIService {
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 		
 		ResponseEntity<String> result = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
-		System.out.println(cityKey +": " +result.getBody());
+		logger.info("API result for "+ cityKey +": " +result.getBody());
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {						
 			City city = objectMapper.readValue(result.getBody(), City.class);			
 			return city.getCurrently();					    
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
