@@ -121,6 +121,6 @@ public class DarkSkyAPIService {
 		Date today = new Date();
 		Date threeDaysAgo = new Date(today.getTime() - (3*60*60*24*1000));
 		cityWeatherRepositoryService.deleteByDate(threeDaysAgo);
-		System.out.println("yes");
+		logger.info("delete 3 days old records");
 	}
 }
